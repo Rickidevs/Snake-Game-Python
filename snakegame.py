@@ -2,17 +2,14 @@ import turtle
 import time
 import random
 
-delay = 0.2  # Oyun döngüsündeki gecikme süresi
+delay = 0.2
 
-# Pencere ayarları
 wn = turtle.Screen()
 wn.title("Snake game developed by Elvin")
 wn.bgcolor("black")
 wn.setup(width=600, height=650)
-wn.tracer(0)  # Animasyonu kapat
+wn.tracer(0) 
 
-
-# Yılan başlangıç konumu
 head = turtle.Turtle()
 head.speed(0)
 head.shape("square")
@@ -21,7 +18,6 @@ head.penup()
 head.goto(0, 0)
 head.direction = "Stop"
 
-# Yemek oluşturma
 food = turtle.Turtle()
 food.speed(0)
 food.shape("circle")
@@ -29,11 +25,10 @@ food.color("red")
 food.penup()
 food.goto(0, 100)
 
-segments = []  # Yılanın vücut segmentleri
+segments = []
 
-# Draw grid
 square_size = 20
-turtle.pensize(0.2)  # Çizgi kalınlığını ayarla
+turtle.pensize(0.2)
 turtle.pencolor("grey")
 for y in range(-250, 250 + square_size, square_size):
     for x in range(-230, 230 + square_size, square_size):
@@ -45,7 +40,6 @@ for y in range(-250, 250 + square_size, square_size):
             turtle.left(90)
 turtle.hideturtle()
 
-# Fonksiyonlar
 def go_up():
     if head.direction != "down":
         head.direction = "up"
@@ -80,18 +74,16 @@ def move():
         x = head.xcor()
         head.setx(x + 20)
 
-# Tuş olayları
 wn.listen()
-wn.onkeypress(go_up, "Up")    # Yukarı yön tuşu
-wn.onkeypress(go_down, "Down")  # Aşağı yön tuşu
-wn.onkeypress(go_left, "Left")  # Sol yön tuşu
-wn.onkeypress(go_right, "Right")  # Sağ yön tuşu
+wn.onkeypress(go_up, "Up") 
+wn.onkeypress(go_down, "Down")
+wn.onkeypress(go_left, "Left")
+wn.onkeypress(go_right, "Right")
 
 
 score = 0
 high_score = 0
 
-# Score gösteren Turtle
 score_turtle = turtle.Turtle()
 score_turtle.speed(0)
 score_turtle.color("white")
@@ -99,7 +91,7 @@ score_turtle.color("white")
 def show_score():
     score_turtle.clear()
     score_turtle.penup()
-    score_turtle.goto(0, 280)  # Positionierung links oben
+    score_turtle.goto(0, 280)
     score_turtle.write("Score: {}  High Score: {}".format(score, high_score), align="center",font=("Courier", 24, "normal"))
     score_turtle.hideturtle()
 
@@ -109,13 +101,11 @@ def spawn_food():
         x = random.randint(-230, 230)
         y = random.randint(-250, 250)
 
-        # Yemek yılanın üzerinde değilse, break ile döngüden çık
         if (x, y) not in [(segment.xcor(), segment.ycor()) for segment in segments]:
             break
 
     food.goto(x, y)
 
-# Score ve High Score'ları güncelle
 score_turtle.clear()
 score_turtle.penup()
 score_turtle.goto(0, 280)
@@ -123,17 +113,14 @@ score_turtle.write("Score: {}  High Score: {}".format(score, high_score), align=
                    font=("Courier", 24, "normal"))
 score_turtle.hideturtle()
 
-# Ana oyun döngüsü
 while True:
     wn.update()
 
-    # Sınırları kontrol et
     if head.xcor() > 230 or head.xcor() < -230 or head.ycor() > 250 or head.ycor() < -250:
         time.sleep(1)
         head.goto(0, 0)
         head.direction = "Stop"
 
-        # Segmentleri temizle
         for segment in segments:
             segment.goto(1000, 1000)
 
@@ -141,11 +128,9 @@ while True:
         delay = 0.2
     
 
-    # Yemekle çarpışma kontrolü
     if head.distance(food) < 20:
         spawn_food()
 
-        # Yeni bir segment ekle
         new_segment = turtle.Turtle()
         new_segment.speed(0)
         new_segment.shape("square")
@@ -153,25 +138,20 @@ while True:
         new_segment.penup()
         segments.append(new_segment)
 
-        # Hızı artır
         delay= delay-0.005
         print("mevcut hiz:" ,delay)
         if delay <= 0.007:
             delay = 0.006
        
-
-        # Score artır
         score += 10
 
         if score > high_score:
             high_score = score
 
-        # Score ve High Score'ları güncelle
         score_turtle.clear()
         score_turtle.write("Score: {}  High Score: {}".format(score, high_score), align="center",
                            font=("Courier", 24, "normal"))
 
-    # Yılanın vücut segmentlerini güncelle
     for index in range(len(segments) - 1, 0, -1):
         x = segments[index - 1].xcor()
         y = segments[index - 1].ycor()
@@ -184,9 +164,7 @@ while True:
 
     move()
 
-    # Tail and head collision control
     head_coords = (head.xcor(), head.ycor())
-    # Collision check with snake's body
     for segment in segments:
         if segment.distance(head) < 20 or head_coords in [(segment.xcor(), segment.ycor()) for segment in segments]:
             time.sleep(1)
@@ -200,7 +178,6 @@ while True:
             segments.clear()
             score = 0
 
-            # Update Scores and High Scores
             score_turtle.clear()
             score_turtle.write("Score: {}  High Score: {}".format(score, high_score), align="center",font=("Courier", 24, "normal"))
 
